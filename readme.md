@@ -1,61 +1,300 @@
-# 🛠️ Mastering SOLID Principles & Design Patterns in JavaScript 🚀
+# SOLID Principles and Design Patterns Repository
 
-## 📌 Introduction
+A comprehensive collection of examples and practice problems to master SOLID principles and design patterns in software development.
 
-Welcome to this repository! Here, you will learn how to write clean, scalable, and maintainable JavaScript code using **SOLID principles** and **design patterns**. This guide provides both theoretical explanations and hands-on examples for each principle and pattern.
+## 📂 Repository Structure
 
-- Define the problem
-- Think about solution
-- Make your analysis
-- Enhance it!
+```yaml
+design-patterns/ # (To be populated with design patterns examples)
+solid/
+├── SRP/ # Single Responsibility Principle
+│ ├── example.js
+│ ├── practice-problem.js
+│ └── practice-solution.js
+├── OCP/ # Open/Closed Principle
+│ ├── example.js
+│ ├── practice-problem.js
+│ └── practice-solution.js
+├── LSP/ # Liskov Substitution Principle
+│ ├── example.js
+│ ├── practice-problem.js
+│ └── practice-solution.js
+├── ISP/ # Interface Segregation Principle
+│ ├── example.js
+│ ├── practice-problem.js
+│ └── practice-solution.js
+└── DIP/ # Dependency Inversion Principle
+├── example.js
+├── practice-problem.js
+└── practice-solution.js
+```
 
-## 📚 Table of Contents
+## 🧠 S-O-L-I-D Principles Explained
 
-- [🛠️ Mastering SOLID Principles \& Design Patterns in JavaScript 🚀](#️-mastering-solid-principles--design-patterns-in-javascript-)
-  - [📌 Introduction](#-introduction)
-  - [📚 Table of Contents](#-table-of-contents)
-  - [🔥 SOLID Principles](#-solid-principles)
-  - [🎭 Design Patterns](#-design-patterns)
-    - [**1. Creational Patterns**](#1-creational-patterns)
-    - [**2. Structural Patterns**](#2-structural-patterns)
-    - [**3. Behavioral Patterns**](#3-behavioral-patterns)
-  - [❓ Why Use SOLID \& Design Patterns?](#-why-use-solid--design-patterns)
+### 1. SRP (Single Responsibility Principle)
 
-## 🔥 SOLID Principles
+**Principle**: A class should have only one reason to change  
+**❌ Violation**:
 
-Each **SOLID** principle will be explained with a dedicated folder containing examples:
+```javascript
+class OrderProcessor {
+  processOrder(order) {
+    this.validate(order);
+    const total = this.calculateTotal(order);
+    this.processPayment(order, total);
+    this.saveToDatabase(order);
+    this.sendConfirmationEmail(order);
+  }
 
-1. **Single Responsibility Principle (SRP)**
-2. **Open/Closed Principle (OCP)**
-3. **Liskov Substitution Principle (LSP)**
-4. **Interface Segregation Principle (ISP)**
-5. **Dependency Inversion Principle (DIP)**
+  // 5 responsibilities in one class
+  validate(order) {
+    /* validation logic */
+  }
+  calculateTotal(order) {
+    /* calculation logic */
+  }
+  processPayment(order) {
+    /* payment processing */
+  }
+  saveToDatabase(order) {
+    /* database operations */
+  }
+  sendConfirmationEmail(order) {
+    /* email notifications */
+  }
+}
+```
 
-Each principle has its own directory with real-world JavaScript examples.
+**Problem**: Single class handles order validation, calculations, payments, persistence, and notifications.
 
-## 🎭 Design Patterns
+**✅ Solution**:
 
-A structured explanation of key **design patterns** with practical JavaScript examples:
+```javascript
+class OrderService {
+  validate(order) {
+    /* validation logic */
+  }
+  calculateTotal(order) {
+    /* calculation logic */
+  }
+  saveToDatabase(order) {
+    /* database operations */
+  }
+}
 
-### **1. Creational Patterns**
+class PaymentProcessor {
+  processPayment(order) {
+    /* payment processing */
+  }
+  refundPayment(order) {
+    /* refund logic */
+  }
+}
 
-- Factory Pattern
-- Singleton Pattern
+class NotificationService {
+  sendConfirmationEmail(order) {
+    /* email notifications */
+  }
+}
+```
 
-### **2. Structural Patterns**
+**Fix**: Split into 3 specialized classes each handling one responsibility.
 
-- Adapter Pattern
-- Decorator Pattern
+---
 
-### **3. Behavioral Patterns**
+### 2. OCP (Open/Closed Principle)
 
-- Observer Pattern
-- Strategy Pattern
+**Principle**: Open for extension, closed for modification  
+**❌ Violation**:
 
-Each pattern is placed in its own folder with a README and example code.
+```javascript
+class DiscountCalculator {
+  calculateDiscount(productType, price) {
+    if (productType === "electronics") return price * 0.1;
+    if (productType === "clothing") return price * 0.2;
+    // Requires modification for new product types
+  }
+}
+```
 
-## ❓ Why Use SOLID & Design Patterns?
+**Problem**: Adding new discount types requires changing existing class.
 
-- Improves code quality and readability
-- Enhances code reusability and maintainability
-- Makes applications scalable and easier to extend
+**✅ Solution**:
+
+```javascript
+class DiscountStrategy {
+  applyDiscount(price) {
+    throw new Error("Must implement applyDiscount()");
+  }
+}
+
+class ElectronicsDiscount extends DiscountStrategy {
+  applyDiscount(price) {
+    return price * 0.9;
+  }
+}
+
+class FurnitureDiscount extends DiscountStrategy {
+  applyDiscount(price) {
+    return price * 0.7;
+  }
+}
+```
+
+**Fix**: New discounts extend base class without modifying existing code.
+
+---
+
+### 3. LSP (Liskov Substitution Principle)
+
+**Principle**: Subtypes must be substitutable for base types  
+**❌ Violation**:
+
+```javascript
+class Employee {
+  constructor(hours) {
+    this.hours = hours;
+  }
+  calculateSalary() {
+    return this.hours * 10;
+  }
+}
+
+class FullTimeEmployee extends Employee {
+  calculateSalary() {
+    return this.hours * 20;
+  } // Different calculation
+}
+```
+
+**Problem**: Subclass changes salary calculation formula unexpectedly.
+
+**✅ Solution**:
+
+```javascript
+class SalaryCalculator {
+  calculateSalary() {
+    throw new Error("Implement calculateSalary()");
+  }
+}
+
+class FullTimeCalculator extends SalaryCalculator {
+  calculateSalary(hours) {
+    return hours * 20;
+  }
+}
+
+class PartTimeCalculator extends SalaryCalculator {
+  calculateSalary(hours) {
+    return hours * 10;
+  }
+}
+```
+
+**Fix**: Salary calculation delegated to separate hierarchy.
+
+---
+
+### 4. ISP (Interface Segregation Principle)
+
+**Principle**: Clients shouldn't depend on unused interfaces  
+**❌ Violation**:
+
+```javascript
+class UserManager {
+  registerUser() {}
+  deleteUser() {}
+  subscribeUser() {} // Not needed by all users
+  cancelSubscription() {}
+}
+```
+
+**Problem**: Admin users inherit unnecessary subscription methods.
+
+**✅ Solution**:
+
+```javascript
+class UserOperations {
+  registerUser() {}
+  deleteUser() {}
+}
+
+class SubscriptionManager {
+  subscribeUser() {}
+  cancelSubscription() {}
+}
+```
+
+**Fix**: Split into granular interfaces based on client needs.
+
+---
+
+### 5. DIP (Dependency Inversion Principle)
+
+**Principle**: Depend on abstractions, not concretions  
+**❌ Violation**:
+
+```javascript
+class OrderDatabase {
+  saveOrder(order) {
+    console.log("Saved to SQL");
+  }
+}
+
+class OrderManagementService {
+  constructor() {
+    this.database = new OrderDatabase(); // Direct dependency
+  }
+}
+```
+
+**Problem**: High-level service tightly coupled to SQL implementation.
+
+**✅ Solution**:
+
+```javascript
+class IOrderDatabase {
+  saveOrder(order) {
+    throw new Error("Implement saveOrder()");
+  }
+}
+
+class MongoOrderDatabase extends IOrderDatabase {
+  saveOrder(order) {
+    console.log("Saved to MongoDB");
+  }
+}
+
+class OrderManagementService {
+  constructor(database) {
+    // Abstraction dependency
+    this.database = database;
+  }
+}
+```
+
+**Fix**: Service depends on database interface, not concrete implementation.
+
+## 🚀 How to Use This Repository
+
+1. **Study Examples**: Each principle has an `example.js` demonstrating both violation and solution.
+2. **Solve Practice Problems**: Try the `practice-problem.js` files to fix violations.
+3. **Check Solutions**: Compare your work with `practice-solution.js` files.
+
+## 📚 Prerequisites
+
+- Basic JavaScript knowledge
+- Understanding of object-oriented programming
+- Familiarity with software design concepts
+
+## 🎯 Conclusion
+
+Master these principles to:
+
+- Write more maintainable code
+- Create flexible architectures
+- Reduce code coupling
+- Improve testability
+- Handle changing requirements effectively
+
+**Happy Coding!** 🚀
