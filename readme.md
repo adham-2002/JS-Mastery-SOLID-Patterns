@@ -1,8 +1,9 @@
 # SOLID Principles and Design Patterns Repository
-
+![1736933703893](https://github.com/user-attachments/assets/f10f345a-9585-4321-9a6f-89a920930165)
 A comprehensive collection of examples and practice problems to master SOLID principles and design patterns in software development.
 
 ## 📂 Repository Structure
+
 
 ```yaml
 design-patterns/ # (To be populated with design patterns examples)
